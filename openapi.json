@@ -1,0 +1,614 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pharmacy Management System API",
+    "description": "API for PMS system version number 1, that\ndescribe how to interact with different resources in our system\nsuch:\n  - Drugs\n  - Diseases\n  - Active Ingredients\n  - Interactions\n  - Purchases & Returns\n  - Inventory\n  - Prices\n  - Debits\n  - Users\n",
+    "contact": {
+      "email": "mohammad.ezzeldin.hassan@outlook.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:9984/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Drugs"
+    }
+  ],
+  "paths": {
+    "/drugs": {
+      "get": {
+        "tags": [
+          "Drugs"
+        ],
+        "summary": "Returns list of drugs",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fields",
+            "schema": {
+              "type": "string",
+              "example": "id,name,barcode"
+            },
+            "description": "### Select fields that need to return in response separated by comma `,`\n  - id\n  - name\n  - brandname\n  - type\n  - description\n  - barcode\n  - middleunitnum\n  - smallunitnum\n  - visible\n  - created_by\n  - created_at\n  \n"
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string",
+              "example": "created_by:eq[admin]"
+            },
+            "description": "### Filter data using simple query language work as where clause in SQL\n    **_spaces is considered, use it only if it's part of the values_**.\n  * Filter Query will be parced and compiled to SQL query, such `eq[10]` compiled to `= 10`.\n  * Filter only apply on the list of fields we mentioned apove on `fields` query.\n  * List of comparison operators wiht equvalient on SQL.\n  ---\n  * `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `like` all those operates will take one value such, `eq[1]`, `gt[30]`\n  \n  * `in`, `nin` will accept multi values separated with comma `,` such,\n  `in[1,2,3,4,5]`, `nin[bining,canceled]\n  \n  \n  * `btw`, `nbtw` will accept only 2 values separted by comma `,` such,\n  `btw[100,1000]`, `nbtw[2006,2024]`\n  ---\n  #### Comparison operators\n  - `eq` - =\n  - `neq` - <>\n  - `gt` - >\n  - `gte` - >=\n  - `lt` - <\n  - `lte` - <=\n  - `in` - IN(value1,value2,...)\n  - `nin` - NOT IN(value1,value2,...)\n  - `btw` - BETWEEN value1 AND value1\n  - `nbtw` - NOT BETWEEN\n  - `like` - LIKE   \n  \n      - `like` values can be `[%value]`, `[%value%]`, `[value%]`\n  #### Logical operators\n  - `,` - OR\n  - `;` - AND\n  \n  example of using logical operator  `created_by:eq[admin];name:in[Panadol,Panadol1]`\n  \n"
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "example": "name.asc"
+            },
+            "description": "### Sort data work as ORDER BY on SQL and accept `asc`,`desc` sorting\n"
+          },
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "type": "integer",
+              "example": 2
+            },
+            "description": "### Range work as LIMIT on SQL and accept number of rows    \n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drugs readed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Drugs readed successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Panadol"
+                          },
+                          "brandname": {
+                            "type": "string",
+                            "nullable": true,
+                            "example": "Panadol"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "Capsules"
+                          },
+                          "description": {
+                            "type": "string",
+                            "nullable": true,
+                            "example": "Used for headache"
+                          },
+                          "barcode": {
+                            "type": "integer",
+                            "nullable": true,
+                            "example": 889875623
+                          },
+                          "middleunitnum": {
+                            "type": "integer",
+                            "example": 4,
+                            "description": "Express the number of units in each box of medicine, ex-> Panadol box contains 4 strip of capsules"
+                          },
+                          "smallunitnum": {
+                            "type": "integer",
+                            "nullable": true,
+                            "example": 10,
+                            "description": "Express the number of capsules in each stripe, ex-> 10 capsules in each stripe"
+                          },
+                          "visible": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "created_by": {
+                            "type": "string",
+                            "example": "Admin"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-10-09T19:19:32.000Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Drugs"
+        ],
+        "summary": "Add new drug",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Drugs"
+        },
+        "responses": {
+          "201": {
+            "description": "Drugs added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Drug added successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 18
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client syntax error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Exception happen when missed required field or unvalid field data type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/422"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server Sql error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/503"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drugs/{drugId}": {
+      "get": {
+        "tags": [
+          "Drugs"
+        ],
+        "summary": "Return specific drug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drugId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The drug ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drug with {drugId}",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Drugs readed successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Panadol"
+                          },
+                          "brandname": {
+                            "type": "string",
+                            "nullable": true,
+                            "example": "Panadol"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "Capsules"
+                          },
+                          "description": {
+                            "type": "string",
+                            "nullable": true,
+                            "example": "Used for headache"
+                          },
+                          "barcode": {
+                            "type": "integer",
+                            "nullable": true,
+                            "example": 889875623
+                          },
+                          "middleunitnum": {
+                            "type": "integer",
+                            "example": 4,
+                            "description": "Express the number of units in each box of medicine, ex-> Panadol box contains 4 strip of capsules"
+                          },
+                          "smallunitnum": {
+                            "type": "integer",
+                            "nullable": true,
+                            "example": 10,
+                            "description": "Express the number of capsules in each stripe, ex-> 10 capsules in each stripe"
+                          },
+                          "visible": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "created_by": {
+                            "type": "string",
+                            "example": "Admin"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-10-09T19:19:32.000Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Drug with {drugId} not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server Sql error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/503"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Drugs"
+        ],
+        "summary": "Delete specific drug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drugId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The drug ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Drug deleted successfully"
+          },
+          "404": {
+            "description": "Drug with {drugId} not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Delete undeletable drug",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "code": {
+                      "type": "integer",
+                      "default": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Drug not deletable after linked with purchase bill"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server Sql error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/503"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Drugs"
+        ],
+        "summary": "Update specific drug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drugId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The drug ID"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Drugs"
+        },
+        "responses": {
+          "204": {
+            "description": "Drug updated successfully"
+          },
+          "404": {
+            "description": "Drug with {drugId} not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Exception happen when missed required field or unvalid field data type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/422"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server Sql error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/503"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "400": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "code": {
+            "type": "integer",
+            "default": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Error in syntax of key and values near to ..."
+          }
+        }
+      },
+      "404": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "code": {
+            "type": "integer",
+            "default": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "No query results for model ..."
+          }
+        }
+      },
+      "422": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "The name field is required."
+                }
+              }
+            }
+          }
+        }
+      },
+      "503": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "code": {
+            "type": "integer",
+            "default": 503
+          },
+          "message": {
+            "type": "string",
+            "example": "SQLSTATE[HY000] General error..."
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "Drugs": {
+        "description": "A JSON object containing pet information",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Panadol"
+                },
+                "brandname": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "Panadol"
+                },
+                "type": {
+                  "type": "integer",
+                  "example": 1,
+                  "description": "Value of \"id\" on \"options\" table for column \"type\" with value \"dosage_forms\""
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "Used for headache"
+                },
+                "barcode": {
+                  "type": "integer",
+                  "nullable": true,
+                  "example": 889875623
+                },
+                "middleunitnum": {
+                  "type": "integer",
+                  "example": 4,
+                  "description": "Express the number of units in each box of medicine, ex-> Panadol box contains 4 strip of capsules"
+                },
+                "smallunitnum": {
+                  "type": "integer",
+                  "nullable": true,
+                  "example": 10,
+                  "description": "Express the number of capsules in each stripe, ex-> 10 capsules in each stripe"
+                },
+                "visible": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "created_by": {
+                  "type": "integer",
+                  "example": 1
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "middleunitnum",
+                "visible",
+                "createdby"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
